@@ -13,12 +13,12 @@ import com.BankingAPP.BankingApplication.service.AccountService;
 
 
 
+
 @Service
 public class AccountServiceImpl implements AccountService {
     
     private final AccountRepository accountRepository;
 
-    // Constructor Injection
     public AccountServiceImpl(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }

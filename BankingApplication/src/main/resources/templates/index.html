@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhiru Bhai Banking Application</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #0077cc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+        }
+
+        header p {
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .form-container, .table-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 48%;
+        }
+
+        .form-container h2, .table-container h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #0077cc;
+        }
+
+        input[type="text"], input[type="number"], input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="submit"] {
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #005f99;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #0077cc;
+            color: white;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        button {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #cc0000;
+        }
+
+        footer {
+            background-color: #0077cc;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .form-container, .table-container {
+                width: 80%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Dhiru Bhai Bank</h1>
+    <p>Your Trusted Financial Partner</p>
+</header>
+
+<div class="container">
+    <div class="form-container">
+        <h2>Create Account</h2>
+        <form onsubmit="createAccount(event)">
+            <label for="accountHolderName">Account Holder Name:</label>
+            <input type="text" id="accountHolderName" required><br><br>
+            <label for="initialBalance">Initial Balance:</label>
+            <input type="number" id="initialBalance" required><br><br>
+            <input type="submit" value="Create Account">
+        </form>
+
+        <h2>Get Account Details</h2>
+        <form onsubmit="getAccount(event)">
+            <label for="accountId">Account ID:</label>
+            <input type="number" id="accountId" required><br><br>
+            <input type="submit" value="Get Account">
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Account Number</th>
+                    <th>Account Holder Name</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody id="accountDetailsTableBody">
+                <!-- Account data will be displayed here -->
+            </tbody>
+        </table>
+
+        <h2>Deposit Money</h2>
+        <form onsubmit="depositMoney(event)">
+            <label for="depositAccountId">Account ID:</label>
+            <input type="number" id="depositAccountId" required><br><br>
+            <label for="depositAmount">Deposit Amount:</label>
+            <input type="number" id="depositAmount" required><br><br>
+            <input type="submit" value="Deposit Money">
+        </form>
+
+        <h2>Withdraw Money</h2>
+        <form onsubmit="withdrawMoney(event)">
+            <label for="withdrawAccountId">Account ID:</label>
+            <input type="number" id="withdrawAccountId" required><br><br>
+            <label for="withdrawAmount">Withdraw Amount:</label>
+            <input type="number" id="withdrawAmount" required><br><br>
+            <input type="submit" value="Withdraw Money">
+        </form>
+    </div>
+
+    <div class="table-container">
+        <h2>All Accounts</h2>
+        <button onclick="getAllAccounts(event)">Get All Accounts</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Account Number</th>
+                    <th>Account Holder Name</th>
+                    <th>Balance</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="accountsTableBody">
+                <!-- Account data will be displayed here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 Dhiru Bhai  Banking. All rights reserved.</p>
+    <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+</footer>
+
+<script>
+    async function makeRequest(url, method, data = null) {
+        const options = {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+        };
+        if (data) options.body = JSON.stringify(data);
+
+        const response = await fetch(url, options);
+        return await response.json();
+    }
+
+    async function createAccount(event) {
+        event.preventDefault();
+        const accountData = {
+            accountHolderName: document.getElementById('accountHolderName').value,
+            balance: parseFloat(document.getElementById('initialBalance').value),
+        };
+        const result = await makeRequest('http://localhost:8080/api/accounts', 'POST', accountData);
+        alert('Account Created: ' + JSON.stringify(result));
+    }
+
+    async function getAccount(event) {
+        event.preventDefault();
+        const accountId = document.getElementById('accountId').value;
+        const result = await makeRequest(`http://localhost:8080/api/accounts/${accountId}`, 'GET');
+        const accountData = result;
+        const tableBody = document.getElementById('accountDetailsTableBody');
+        tableBody.innerHTML = '';
+        const row = document.createElement('tr');
+        row.innerHTML = `  
+            <td>${accountData.accNo}</td>
+            <td>${accountData.accountHolderName}</td>
+            <td>${accountData.balance}</td>
+        `;
+        tableBody.appendChild(row);
+    }
+
+    async function depositMoney(event) {
+        event.preventDefault();
+        const accountId = document.getElementById('depositAccountId').value;
+        const amount = parseFloat(document.getElementById('depositAmount').value);
+        const result = await makeRequest(`http://localhost:8080/api/accounts/${accountId}/deposit`, 'PUT', { amount: amount });
+        alert('Deposit Successful: ' + JSON.stringify(result));
+        getAllAccounts(event); // Refresh account list
+    }
+
+    async function withdrawMoney(event) {
+        event.preventDefault();
+        const accountId = document.getElementById('withdrawAccountId').value;
+        const amount = parseFloat(document.getElementById('withdrawAmount').value);
+        const result = await makeRequest(`http://localhost:8080/api/accounts/${accountId}/withdraw`, 'PUT', { amount: amount });
+        alert('Withdrawal Successful: ' + JSON.stringify(result));
+        getAllAccounts(event); // Refresh account list
+    }
+
+    async function deleteAccount(event, accountId) {
+        event.preventDefault();
+        const result = await makeRequest(`http://localhost:8080/api/accounts/${accountId}`, 'DELETE');
+        alert(result);  // Confirm account deletion
+        getAllAccounts(event); // Refresh the account list
+    }
+
+    async function getAllAccounts(event) {
+        event.preventDefault();
+        const result = await makeRequest('http://localhost:8080/api/accounts', 'GET');
+        const tableBody = document.getElementById('accountsTableBody');
+        tableBody.innerHTML = '';
+        result.forEach(account => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${account.accNo}</td>
+                <td>${account.accountHolderName}</td>
+                <td>${account.balance}</td>
+                <td><button class="btn" onclick="deleteAccount(event, ${account.accNo})">Delete</button></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+</script>
+
+</body>
+</html>

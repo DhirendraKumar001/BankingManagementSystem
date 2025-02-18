@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import com.BankingAPP.BankingApplication.dto.AccountDto;
 import com.BankingAPP.BankingApplication.service.AccountService;
 
+
+
 @RestController
 @RequestMapping("/api/accounts")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AccountController {
     
     private final AccountService accountService;
@@ -30,7 +33,7 @@ public class AccountController {
         AccountDto accountDto = accountService.getAccountById(accNo);
         return ResponseEntity.ok(accountDto);
     }
-    @PutMapping("/{accNo}/deposite") 
+    @PutMapping("/{accNo}/deposit") 
     public ResponseEntity<AccountDto> deposit(@PathVariable Long accNo, @RequestBody Map<String, Double> request) {
 
         Double amount = request.get("amount");
@@ -55,7 +58,7 @@ public class AccountController {
     	
     }
     
-    @DeleteMapping("/{accNo}/delete")
+    @DeleteMapping("/{accNo}")
     public ResponseEntity<String>deleteAccount(@PathVariable Long accNo){
     	
     	accountService.deleteAccount(accNo);

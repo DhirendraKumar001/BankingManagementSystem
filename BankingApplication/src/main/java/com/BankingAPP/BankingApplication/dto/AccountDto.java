@@ -1,19 +1,26 @@
 package com.BankingAPP.BankingApplication.dto;
 
+
+
 public class AccountDto {
 	
 	
 	private long accNo;
-	
 	private String accHolderName;
-	
 	private double accBalance;
 	
+	
+	
+	public AccountDto() {
+	}
+
 	public AccountDto(long accNo, String accHolderName, double accBalance) {
 		super();
 		
 		this.accNo = accNo;
+		
 		this.accHolderName = accHolderName;
+		
 		this.accBalance = accBalance;
 		
 	}
